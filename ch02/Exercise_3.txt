@@ -1,0 +1,10 @@
+GHCi, version 7.10.3: http://www.haskell.org/ghc/  :? for help
+Prelude> :load ch02/Exercise_2.hs
+[1 of 1] Compiling Main             ( ch02/Exercise_2.hs, interpreted )
+Ok, modules loaded: Main.
+*Main> lastButOne [1,2,3,4]
+3
+*Main> lastButOne [1]
+*** Exception: Prelude.last: empty list
+*Main>
+
