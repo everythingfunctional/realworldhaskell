@@ -1,0 +1,7 @@
+GHCi, version 7.10.3: http://www.haskell.org/ghc/  :? for help
+Prelude> :t False
+False :: Bool
+Prelude> :t (["foo", "bar"], 'a')
+(["foo", "bar"], 'a') :: ([[Char]], Char)
+Prelude> :t [(True, []), (False, [['a']])]
+[(True, []), (False, [['a']])] :: [(Bool, [[Char]])]
