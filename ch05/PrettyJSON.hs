@@ -6,6 +6,18 @@ import Data.Char
 import SimpleJSON
 import Numeric
 
+series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
+series open close item = enclose open close
+                       . fsep . punctuate (char ',') . map item
+
+fsep :: [Doc] -> Doc
+fsep xs = undefined
+
+punctuate :: Doc -> [Doc] -> [Doc]
+punctuate p [] = []
+punctuate p [d] = [d]
+punctuate p (d:ds) = (d <> p) : punctuate p ds
+
 data Doc = ToBeDefined
          deriving (Show)
 
@@ -63,3 +75,8 @@ renderJValue (JNumber num) = double num
 renderJValue (JBool True) = text "true"
 renderJValue (JBool False) = text "false"
 renderJValue JNull = text "null"
+renderJValue (JArray ary) = series '[' ']' renderJValue ary
+renderJValue (JObject obj) = series '{' '}' field obj
+    where field (name, val) = string name
+                            <> text ": "
+                            <> renderJValue val
