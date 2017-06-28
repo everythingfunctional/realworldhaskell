@@ -1,10 +1,10 @@
 module PrettyJSON where
 
-import Data.List (intercalate)
-import Data.Bits
-import Data.Char
-import SimpleJSON
-import Numeric
+import           Data.Bits
+import           Data.Char
+import           Data.List  (intercalate)
+import           Numeric
+import           SimpleJSON
 
 series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
 series open close item = enclose open close
@@ -14,8 +14,8 @@ fsep :: [Doc] -> Doc
 fsep xs = undefined
 
 punctuate :: Doc -> [Doc] -> [Doc]
-punctuate p [] = []
-punctuate p [d] = [d]
+punctuate p []     = []
+punctuate p [d]    = [d]
 punctuate p (d:ds) = (d <> p) : punctuate p ds
 
 data Doc = ToBeDefined

@@ -20,21 +20,21 @@ data JValue = JString String
 
 getString :: JValue -> Maybe String
 getString (JString s) = Just s
-getString _ = Nothing
+getString _           = Nothing
 
 getInt (JNumber n) = Just (truncate n)
-getInt _ = Nothing
+getInt _           = Nothing
 
 getDouble (JNumber n) = Just n
-getDouble _ = Nothing
+getDouble _           = Nothing
 
 getBool (JBool b) = Just b
-getBool _ = Nothing
+getBool _         = Nothing
 
 getObject (JObject o) = Just o
-getObject _ = Nothing
+getObject _           = Nothing
 
 getArray (JArray a) = Just a
-getArray _ = Nothing
+getArray _          = Nothing
 
 isNull v = v == JNull
