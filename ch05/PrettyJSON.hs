@@ -1,38 +1,26 @@
-module PrettyJSON where
+module PrettyJSON
+    (
+        renderJValue
+    )
+    where
 
-import           Data.Bits
-import           Data.Char
-import           Data.List  (intercalate)
-import           Numeric
-import           SimpleJSON
+import           Data.Bits  (shiftR, (.&.))
+import           Data.Char  (ord)
+import           Numeric    (showHex)
+
+import           Prettify   (Doc, char, compact, double, fsep, hcat,
+                             punctuate, text, (<>))
+import           SimpleJSON (JValue (..))
 
 series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
 series open close item = enclose open close
                        . fsep . punctuate (char ',') . map item
 
-fsep :: [Doc] -> Doc
-fsep xs = undefined
+string :: String -> Doc
+string = enclose '"' '"' . hcat . map oneChar
 
-punctuate :: Doc -> [Doc] -> [Doc]
-punctuate p []     = []
-punctuate p [d]    = [d]
-punctuate p (d:ds) = (d <> p) : punctuate p ds
-
-data Doc = ToBeDefined
-         deriving (Show)
-
-(<>) :: Doc -> Doc -> Doc
-a <> b = undefined
-
-hcat :: [Doc] -> Doc
-hcat xs = undefined
-
-oneChar :: Char -> Doc
-oneChar c = case lookup c simpleEscapes of
-                Just r -> text r
-                Nothing | mustEscape c -> hexEscape c
-                        | otherwise -> char c
-    where mustEscape c = c < ' ' || c == '\x7f' || c > '\xff'
+enclose :: Char -> Char -> Doc -> Doc
+enclose left right x = char left <> x <> char right
 
 simpleEscapes :: [(Char, String)]
 simpleEscapes = zipWith ch "\b\n\f\r\t\\\"/" "bnfrt\\\"/"
@@ -54,20 +42,12 @@ hexEscape c | d < 0x10000 = smallHex d
             | otherwise = astral (d - 0x10000)
     where d = ord c
 
-char :: Char -> Doc
-char c = undefined
-
-enclose :: Char -> Char -> Doc -> Doc
-enclose left right x = char left <> x <> char right
-
-string :: String -> Doc
-string = enclose '"' '"' . hcat . map oneChar
-
-text :: String -> Doc
-text str = undefined
-
-double :: Double -> Doc
-double num = undefined
+oneChar :: Char -> Doc
+oneChar c = case lookup c simpleEscapes of
+                Just r -> text r
+                Nothing | mustEscape c -> hexEscape c
+                        | otherwise -> char c
+    where mustEscape c = c < ' ' || c == '\x7f' || c > '\xff'
 
 renderJValue :: JValue -> Doc
 renderJValue (JString str) = string str
