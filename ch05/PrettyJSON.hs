@@ -8,8 +8,8 @@ import           Data.Bits  (shiftR, (.&.))
 import           Data.Char  (ord)
 import           Numeric    (showHex)
 
-import           Prettify   (Doc, char, compact, double, fsep, hcat,
-                             punctuate, text, (<>))
+import           Prettify   (Doc, char, compact, double, fill, fsep, hcat,
+                             pretty, punctuate, text, (<>))
 import           SimpleJSON (JValue (..))
 
 series :: Char -> Char -> (a -> Doc) -> [a] -> Doc

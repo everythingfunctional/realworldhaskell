@@ -96,3 +96,18 @@ w `fits` _ | w < 0 = False
 w `fits` ""        = True
 w `fits` ('\n':_)  = True
 w `fits` (c:cs)    = (w - 1) `fits` cs
+
+fill :: Int -> Doc -> Doc
+fill desiredWidth doc = processNode 0 [doc]
+    where processNode col (d:ds) =
+            case d of
+                Empty        -> Empty <> processNode col ds
+                Char c       -> Char c <> processNode (col + 1) ds
+                Text s       -> Text s <> processNode (col + (length s)) ds
+                Line         -> spaceOut col <> Line <> processNode 0 ds
+                a `Concat` b -> processNode col (a:b:ds)
+                a `Union` b  -> processNode col (a:ds) `Union` processNode col (b:ds)
+          processNode col [] = spaceOut col
+          spaceOut col
+                | desiredWidth - col < 1 = Empty
+                | otherwise              = Text (replicate (desiredWidth - col) ' ')
