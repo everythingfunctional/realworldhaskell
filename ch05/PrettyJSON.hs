@@ -9,7 +9,7 @@ import           Data.Char  (ord)
 import           Numeric    (showHex)
 
 import           Prettify   (Doc, char, compact, double, fill, fsep, hcat,
-                             pretty, punctuate, text, (<>))
+                             pretty, punctuate, text, (<>), nest)
 import           SimpleJSON (JValue (..))
 
 series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
@@ -60,3 +60,5 @@ renderJValue (JObject obj) = series '{' '}' field obj
     where field (name, val) = string name
                             <> text ": "
                             <> renderJValue val
+
+example_value = renderJValue (JObject [("f", JNumber 1), ("q", JBool True)])

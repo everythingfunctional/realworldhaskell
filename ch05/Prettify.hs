@@ -111,3 +111,20 @@ fill desiredWidth doc = processNode 0 [doc]
           spaceOut col
                 | desiredWidth - col < 1 = Empty
                 | otherwise              = Text (replicate (desiredWidth - col) ' ')
+
+nest :: Int -> Doc -> Doc
+nest width doc = processNode 0 [doc]
+    where processNode level (d:ds) =
+            case d of
+                Empty        -> Empty <> processNode level ds
+                Char c       -> case c of
+                                    '{' -> Char c <> processNode (level + 1) ds
+                                    '}' -> Char c <> processNode (level - 1) ds
+                                    '[' -> Char c <> processNode (level + 1) ds
+                                    ']' -> Char c <> processNode (level - 1) ds
+                                    _   -> Char c <> processNode level ds
+                Text s       -> Text s <> processNode level ds
+                Line         -> Line <> (hcat (replicate level (Text (replicate width ' ')))) <> processNode level ds
+                a `Concat` b -> processNode level (a:b:ds)
+                a `Union` b  -> processNode level (a:ds) `Union` processNode level (b:ds)
+          processNode level [] = Empty
