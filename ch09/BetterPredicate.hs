@@ -1,4 +1,4 @@
-import           Control.Exception (bracket, handle)
+import           Control.Exception (bracket, handle, SomeException(..))
 import           Control.Monad     (filterM)
 import           Data.Time.Clock   (UTCTime (..))
 import           System.Directory  (Permissions (..), getModificationTime,
@@ -15,8 +15,11 @@ type Predicate =  FilePath      -- path to directory entry
                -> UTCTime       -- last modified
                -> Bool
 
+ignoreException :: SomeException -> IO (Maybe Integer)
+ignoreException _ = return Nothing
+
 getFileSize :: FilePath -> IO (Maybe Integer)
-getFileSize path = handle (\_ -> return Nothing) $
+getFileSize path = handle ignoreException $
   bracket (openFile path ReadMode) hClose $ \h -> do
     size <- hFileSize h
     return (Just size)
@@ -40,8 +43,24 @@ simpleFileSize path = do
 
 saferFileSize :: FilePath -> IO (Maybe Integer)
 
-saferFileSize path = handle (\_ -> return Nothing) $ do
+saferFileSize path = handle ignoreException $ do
     h <- openFile path ReadMode
     size <- hFileSize h
     hClose h
     return (Just size)
+
+type InfoP a =  FilePath        -- path to directory entry
+             -> Permissions     -- permissions
+             -> Maybe Integer   -- file size (Nothing if not file)
+             -> UTCTime         -- last modified
+             -> a
+
+pathP :: InfoP FilePath
+pathP path _ _ _ = path
+
+sizeP :: InfoP Integer
+sizeP _ _ (Just size) _ = size
+sizeP _ _ Nothing     _ = -1
+
+equalP :: (Eq a) => InfoP a -> a -> InfoP Bool
+equalP f k w x y z = f w x y z == k
