@@ -1,5 +1,0 @@
-The last function must return something of the same type
-as all the items in the list it is given. It could feed some
-of those items into other functions, or combine them
-in some way to obtain the resulting value, but the type
-of the value is explicitly defined based on its inputs.

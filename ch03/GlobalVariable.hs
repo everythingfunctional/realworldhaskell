@@ -1,1 +1,0 @@
-itemName = "Weighted Companion Cube"
